@@ -1,3 +1,9 @@
+"""
+Creator: Mickey Gordon
+Last update: June 17, 2020 (initial upload)
+No usage limitations with appropriate citations.
+"""
+
 import babel.numbers as bn
 import decimal as de
 import sys

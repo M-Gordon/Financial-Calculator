@@ -1,10 +1,14 @@
 """
 Creator: Mickey Gordon
-Last update: June 17, 2020 (initial upload)
 No usage limitations with appropriate citations.
+Initial upload: 06/17/2020
+
+Last updated: 08/19/2020
+Recent update: added module 5 (A/R turnover calculator)
 """
 
 import babel.numbers as bn
+import pandas as pd
 import decimal as de
 import sys
 from pandas import DataFrame
@@ -16,6 +20,7 @@ Please choose calculator mode:
 (2) Investment growth calculator
 (3) Loan amortization calculator
 (4) Present/future value calculator
+(5) A/R turnover calculator
 > """)
 
 if "1" in calcMode:
@@ -308,6 +313,7 @@ elif "3" in calcMode:
     dFrame(loan, years, interest, apr, pymt)
 
 elif "4" in calcMode:
+    """PRESENT/FUTURE VALUE CALCULATOR"""
     method = input("Present value calculation (PV) or future value calculation (FV)? ")
     PV_control = ['PV', 'pv']
     FV_control = ['FV', 'fv']
@@ -342,5 +348,69 @@ elif "4" in calcMode:
         print("-" * len(result))
         print(result)
         print("-" * len(result))
+        
+elif "5" in calcMode:
+    """A/R TURNOVER CALCULATOR"""
+    print("""\n\nEnsure that the list is formatted as a CSV file in the same folder as this Python file. It must be in the format:
+        ___________________________________
+        Date      AR_Sale     AR_Collection
+        1/1/20    8480          8393
+        ...       ...           ...
+        ___________________________________
+    """)
+    
+    filename = input("What is the file name (i.e., AR_Sales.csv)? ")
+    # Import csv file with A/R data
+    file = pd.read_csv(filename, usecols=['Date', 'AR_Sale', 'AR_Collection'])
+    
+    # Convert A/R sales data to iterable list
+    df = pd.DataFrame(file, columns= ['AR_Sale'])
+    sales = df['AR_Sale'].values.tolist()
+    
+    # Calculate average A/R balance for the period
+    beg_ar = sales[0]
+    end_ar = sales[-1]
+    avg_ar = (beg_ar + end_ar)/2
+    
+    # Calculate total credit sales
+    net_sales = sum(sales)
+    
+    # Convert A/R collections data to iterable list
+    df = pd.DataFrame(file, columns= ['AR_Collection'])
+    collections = df['AR_Collection'].values.tolist()
+    total_coll = sum(collections)
+    percent = total_coll / net_sales
+    percent *= 100
+    
+    # Calculate A/R turnover ratio
+    turnover_ratio = net_sales / avg_ar
+    
+    # Format inputs
+    beg_ar = bn.format_currency(de.Decimal(beg_ar), "USD")
+    end_ar = bn.format_currency(de.Decimal(end_ar), "USD")
+    avg_ar = bn.format_currency(de.Decimal(avg_ar), "USD")
+    total_sales = bn.format_currency(de.Decimal(net_sales), "USD")
+    turnover_ratio = round(turnover_ratio,1)
+    percent = round(percent)
+    
+    # Print summary
+    print("=" * 36)
+    print("%23s" % "**Summary**\n")
+    print("%11s%14s" % ("Beginning A/R Balance:", beg_ar))
+    print("%11s%17s" % ("Ending A/R Balance:", end_ar))
+    print("%11s%16s" % ("Average A/R Balance:", avg_ar))
+    print("%11s%24s" % ("Total Sales:", total_sales))
+    print("%11s%17s\n" % ("A/R Turnover Ratio:", turnover_ratio))
+    print("%11s%13s%0s" % ("Percent A/R Collected:", percent, "%"))
+    print("=" * 36)
+    
+    # Construct collection % pie chart
+    collected = int(percent)
+    uncollected = 100 - collected
+    coll_label = f"Collected: {collected}%"
+    uncoll_label = f"Uncollected: {uncollected}%"
+    df = pd.DataFrame({'A/R Collections': [collected, uncollected]}, index=[coll_label, uncoll_label])
+    plot = df.plot.pie(y='A/R Collections', figsize=(5, 5))
+    
 else:
-    print("Invalid entry. Please choose 1, 2, 3, or 4.\nProgram restarting.")
+    print("Invalid entry. Please choose 1, 2, 3, 4, or 5.\nProgram restarting.")

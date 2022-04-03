@@ -3,3 +3,4 @@ Financial calculator with functionality for depreciation, hypothetical investmen
 Update history: 
   -6/17/20 (initial upload)
   -11/24/20 (additions & updates)
+  -1/18/22 (updates)

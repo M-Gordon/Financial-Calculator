@@ -3,7 +3,7 @@ Creator: Mickey Gordon
 No usage limitations with appropriate citations.
 Initial upload: 06/17/2020
 
-Last updated: 011/24/2020
+Last updated: 11/24/2020
 Recent update: updated module 5 (A/R turnover calculator)
 """
 
